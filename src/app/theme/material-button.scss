@@ -1,0 +1,13 @@
+// Figma spec: filled buttons are tall rounded pills (10px radius, 56px height,
+// bold label) — diverges enough from the generated M3 default to need overrides.
+@use '@angular/material' as mat;
+
+html {
+  @include mat.button-overrides(
+    (
+      filled-container-shape: 10px,
+      filled-container-height: 56px,
+      filled-label-text-weight: 700,
+    )
+  );
+}

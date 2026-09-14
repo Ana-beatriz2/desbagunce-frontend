@@ -1,3 +1,36 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import 'tailwindcss';
+
+/*
+ * Design tokens from Figma (Projeto Desbagunce).
+ * Tailwind v4 is CSS-first — this @theme block is the single source of truth
+ * for color/font/radius tokens (no tailwind.config.js in this project).
+ * Never hardcode a raw hex/px value in a component when a token below covers it.
+ */
+@theme {
+  --color-background: #fbf7f1;
+  --color-surface: #ffffff;
+  --color-primary: #b5592f;
+  --color-ink: #2b2620;
+  --color-muted: #736b5e;
+  --color-border: #e7e0d4;
+  --color-danger: #b94a4a;
+  --color-secondary: #7a8b65;
+  --color-secondary-soft: #e0e5d6;
+
+  --font-sans: 'Manrope', system-ui, sans-serif;
+  --font-display: 'Fraunces', serif;
+
+  --radius-field: 10px;
+  --radius-card: 14px;
+}
+
+/* Fraunces is a variable font; Figma's exported instances all pin these axes. */
+.font-display {
+  font-variation-settings: 'SOFT' 0, 'WONK' 1;
+}
+
+body {
+  font-family: var(--font-sans);
+}

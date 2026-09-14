@@ -1,0 +1,82 @@
+<div class="flex min-h-screen flex-col items-center justify-center bg-background px-6 py-10">
+  <h1 class="font-display mb-10 text-center text-4xl font-bold tracking-tight text-primary">Desbagunce</h1>
+
+  <div class="flex w-full max-w-md flex-col gap-6 rounded-card border border-border bg-surface p-8 shadow-sm">
+    <div class="flex flex-col items-center gap-2 text-center">
+      <h2 class="font-display text-3xl font-semibold text-ink">Sua casa</h2>
+      <p class="text-sm text-muted">Dê um nome para o seu lar.</p>
+    </div>
+
+    <div class="flex flex-col items-center">
+      <input #fileInput type="file" accept="image/*" class="hidden" (change)="onFileSelected($event)" />
+
+      <button
+        type="button"
+        (click)="openFilePicker()"
+        class="flex size-24 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-secondary/30 bg-secondary-soft"
+      >
+        @if (photoPreview(); as preview) {
+          <img [src]="preview" alt="Foto da casa" class="size-full object-cover" />
+        } @else {
+          <span class="flex flex-col items-center gap-1 text-secondary">
+            <mat-icon style="font-size: 1.5rem; height: 1.5rem; width: 1.5rem;">photo_camera</mat-icon>
+            <span class="text-center text-[10px] leading-tight font-bold">Adicionar<br />foto</span>
+          </span>
+        }
+      </button>
+
+      <p class="pt-3 text-xs text-muted">(opcional)</p>
+    </div>
+
+    <form class="flex flex-col gap-6 pt-2" [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="flex flex-col gap-1.5">
+        <label for="name" class="text-sm font-medium text-ink">Nome da casa</label>
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          placeholder="Ex: Casa da Ana"
+          class="w-full rounded-field border border-border bg-background/50 px-4 py-4 text-base text-ink placeholder:text-ink/40 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+          [class.border-danger]="form.controls.name.invalid && form.controls.name.touched"
+        />
+        @if (form.controls.name.invalid && form.controls.name.touched) {
+          <p class="text-xs text-danger">Dê um nome para a sua casa.</p>
+        }
+      </div>
+
+      @if (errorMessage(); as error) {
+        <p class="text-center text-sm text-danger">{{ error }}</p>
+      }
+
+      @if (success()) {
+        <p class="text-center text-sm text-primary">Conta criada com sucesso!</p>
+      }
+
+      <div class="flex flex-col gap-4 pt-2">
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          class="w-full text-base!"
+          [disabled]="submitting() || success()"
+        >
+          {{ submitting() ? 'Criando...' : 'Começar' }}
+        </button>
+        <button
+          mat-button
+          type="button"
+          routerLink="/register"
+          class="w-full font-semibold! text-muted!"
+          [disabled]="submitting()"
+        >
+          Voltar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="flex items-center justify-center gap-3 pt-8">
+    <span class="h-1.5 w-8 rounded-full bg-border"></span>
+    <span class="h-1.5 w-8 rounded-full bg-primary"></span>
+  </div>
+</div>

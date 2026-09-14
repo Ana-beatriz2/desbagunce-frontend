@@ -4,19 +4,20 @@
 // Learn more about theming and how to use it for your application's
 // custom components at https://material.angular.dev/guide/theming
 @use '@angular/material' as mat;
+@use './theme-colors' as theme;
+@use './app/theme/material-button';
 
-// PLACEHOLDER PALETTE — replace once real Figma tokens exist:
-// ng generate @angular/material:theme-color --primary-color="<figma primary hex>"
-// (see frontend_guide.md > Angular Material Guidelines > Setup & M3 theming)
+// Palette generated from the Figma primary color (#b5592f) via:
+// ng generate @angular/material:theme-color --primary-color="#b5592f"
 html {
   height: 100%;
   @include mat.theme(
     (
       color: (
-        primary: mat.$azure-palette,
-        tertiary: mat.$blue-palette,
+        primary: theme.$primary-palette,
+        tertiary: theme.$tertiary-palette,
       ),
-      typography: Roboto,
+      typography: 'Manrope',
       density: 0,
     )
   );

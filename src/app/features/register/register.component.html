@@ -1,0 +1,75 @@
+<div class="flex min-h-screen flex-col items-center justify-center bg-background px-6 py-10">
+  <h1 class="font-display mb-10 text-center text-4xl font-bold tracking-tight text-primary">Desbagunce</h1>
+
+  <div class="flex w-full max-w-md flex-col gap-8 rounded-card border border-border bg-surface p-8 shadow-sm">
+    <div class="flex flex-col items-center gap-2 text-center">
+      <h2 class="font-display text-3xl font-semibold text-ink">Criar conta</h2>
+      <p class="text-sm text-muted">Comece a organizar seu lar hoje.</p>
+    </div>
+
+    <form class="flex flex-col gap-5" [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="flex flex-col gap-1.5">
+        <label for="name" class="text-sm font-medium text-ink">Nome</label>
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          placeholder="Seu nome completo"
+          class="w-full rounded-field border border-border bg-background/50 px-4 py-4 text-base text-ink placeholder:text-ink/40 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+          [class.border-danger]="form.controls.name.invalid && form.controls.name.touched"
+        />
+        @if (form.controls.name.invalid && form.controls.name.touched) {
+          <p class="text-xs text-danger">Informe seu nome completo.</p>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label for="email" class="text-sm font-medium text-ink">E-mail</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="seu@email.com"
+          class="w-full rounded-field border border-border bg-background/50 px-4 py-4 text-base text-ink placeholder:text-ink/40 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+          [class.border-danger]="form.controls.email.invalid && form.controls.email.touched"
+        />
+        @if (form.controls.email.invalid && form.controls.email.touched) {
+          <p class="text-xs text-danger">Informe um e-mail válido.</p>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label for="password" class="text-sm font-medium text-ink">Senha</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="Mínimo 8 caracteres"
+          class="w-full rounded-field border border-border bg-background/50 px-4 py-4 text-base text-ink placeholder:text-ink/40 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+          [class.border-danger]="form.controls.password.invalid && form.controls.password.touched"
+        />
+        @if (form.controls.password.invalid && form.controls.password.touched) {
+          <p class="text-xs text-danger">A senha deve ter no mínimo 8 caracteres.</p>
+        }
+      </div>
+
+      <p class="px-2 text-center text-xs leading-normal text-muted">
+        Ao continuar, você concorda com nossos
+        <span class="font-semibold text-primary">Termos de Serviço</span>
+        e Política de Privacidade.
+      </p>
+
+      <button mat-flat-button color="primary" type="submit" class="w-full text-base!">Continuar</button>
+    </form>
+
+    <p class="text-center text-sm text-muted">
+      Já tem uma conta?
+      <span class="font-bold text-primary">Entrar</span>
+    </p>
+  </div>
+
+  <div class="flex items-center justify-center gap-3 pt-8">
+    <span class="h-1.5 w-8 rounded-full bg-primary"></span>
+    <span class="h-1.5 w-8 rounded-full bg-border"></span>
+  </div>
+</div>
