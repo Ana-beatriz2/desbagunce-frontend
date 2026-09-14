@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { SignupStateService } from '../../core/services/signup-state.service';
 
 @Component({
   selector: 'app-register',
-  imports: [ReactiveFormsModule, MatButtonModule],
+  imports: [ReactiveFormsModule, RouterLink, MatButtonModule],
   templateUrl: './register.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
