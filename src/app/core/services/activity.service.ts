@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, delay, of } from 'rxjs';
 import { Activity } from '../models/activity.model';
+import { CachedResource } from '../utils/cached-resource';
 
 // TODO(backend): there is no activity/audit-log entity in the backend domain model yet
 // (CLAUDE.md only documents House/User/Item/Tag/Invite) — this whole feature is speculative.
@@ -32,8 +33,12 @@ const MOCK_ACTIVITY: Activity[] = [
   },
 ];
 
+const RECENT_ACTIVITY_PREVIEW_LIMIT = 3;
+
 @Injectable({ providedIn: 'root' })
 export class ActivityService {
+  readonly recentActivity = new CachedResource(() => this.getRecentActivity(RECENT_ACTIVITY_PREVIEW_LIMIT));
+
   getRecentActivity(limit = 3): Observable<Activity[]> {
     return of(MOCK_ACTIVITY.slice(0, limit)).pipe(delay(200));
   }

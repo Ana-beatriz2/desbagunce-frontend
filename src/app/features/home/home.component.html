@@ -1,29 +1,40 @@
 <div class="min-h-screen bg-background md:pl-64">
   <header class="border-b border-border bg-surface px-6 pt-8 pb-6">
     <div class="flex items-start justify-between md:mx-auto md:max-w-3xl">
-      <div class="flex flex-col gap-1">
-        <p class="text-sm font-medium tracking-wide text-ink/60 uppercase">Bem-vinda de volta</p>
-        <h1 class="font-display text-3xl font-bold text-ink">
-          @if (session.value(); as data) {
-            Olá, {{ data.user.name }}!
-          } @else {
-            Olá!
-          }
-        </h1>
-        <div class="flex items-center gap-2 pt-1">
-          <mat-icon style="font-size: 1rem; height: 1rem; width: 1rem;">home</mat-icon>
-          <span class="font-display text-lg text-primary">{{ session.value()?.house?.name ?? 'Sua casa' }}</span>
+      @if (session.value(); as data) {
+        <div class="flex flex-col gap-1">
+          <p class="text-sm font-medium tracking-wide text-ink/60 uppercase">Bem-vinda de volta</p>
+          <h1 class="font-display text-3xl font-bold text-ink">Olá, {{ data.user.name }}!</h1>
+          <div class="flex items-center gap-2 pt-1">
+            <mat-icon style="font-size: 1rem; height: 1rem; width: 1rem;">home</mat-icon>
+            <span class="font-display text-lg text-primary">{{ data.house.name }}</span>
+          </div>
         </div>
-      </div>
-      <app-avatar class="shrink-0" [name]="session.value()?.user?.name ?? '?'" size="md" />
+        <app-avatar class="shrink-0" [name]="data.user.name" size="md" />
+      } @else {
+        <div class="flex flex-col gap-3" aria-hidden="true">
+          <div class="h-4 w-36 animate-pulse rounded-full bg-border"></div>
+          <div class="h-8 w-44 animate-pulse rounded-full bg-border"></div>
+          <div class="h-5 w-32 animate-pulse rounded-full bg-border"></div>
+        </div>
+        <div class="size-12 shrink-0 animate-pulse rounded-full bg-border" aria-hidden="true"></div>
+      }
     </div>
   </header>
 
   <main class="flex flex-col gap-8 px-6 pt-8 pb-32 md:mx-auto md:max-w-3xl md:pb-12">
     <section class="flex gap-3">
-      <app-stat-card [value]="stats.value().ok" label="OK" tone="success" />
-      <app-stat-card [value]="stats.value().low" label="Acabando" tone="warning" />
-      <app-stat-card [value]="stats.value().out" label="Esgotado" tone="danger" />
+      @if (stats.value(); as data) {
+        <app-stat-card [value]="data.ok" label="OK" tone="success" />
+        <app-stat-card [value]="data.low" label="Acabando" tone="warning" />
+        <app-stat-card [value]="data.out" label="Esgotado" tone="danger" />
+      } @else if (stats.hasError()) {
+        <p class="text-sm text-muted">Não foi possível carregar o resumo dos itens.</p>
+      } @else {
+        @for (placeholder of [1, 2, 3]; track placeholder) {
+          <div class="h-19 flex-1 animate-pulse rounded-card bg-border" aria-hidden="true"></div>
+        }
+      }
     </section>
 
     <section class="flex flex-col gap-4">
@@ -32,10 +43,23 @@
         <a routerLink="/items" [queryParams]="{ status: 'attention' }" class="text-sm font-semibold text-primary">Ver todos</a>
       </div>
       <div class="flex flex-col gap-3">
-        @for (item of attentionItems.value(); track item.id) {
-          <app-attention-item [item]="item" (purchased)="markPurchased(item)" />
-        } @empty {
-          <p class="text-sm text-muted">Nenhum item precisa de atenção agora.</p>
+        @if (attentionItems.value(); as items) {
+          @for (item of items; track item.id) {
+            <app-attention-item
+              [item]="item"
+              [pending]="purchaseStates()[item.id] === 'pending'"
+              [failed]="purchaseStates()[item.id] === 'error'"
+              (purchased)="markPurchased(item)"
+            />
+          } @empty {
+            <p class="text-sm text-muted">Nenhum item precisa de atenção agora.</p>
+          }
+        } @else if (attentionItems.hasError()) {
+          <p class="text-sm text-muted">Não foi possível carregar os itens.</p>
+        } @else {
+          @for (placeholder of [1, 2, 3]; track placeholder) {
+            <div class="h-20 animate-pulse rounded-card bg-border" aria-hidden="true"></div>
+          }
         }
       </div>
     </section>
@@ -46,10 +70,21 @@
         <a routerLink="/activities" class="text-sm font-semibold text-primary">Ver todos</a>
       </div>
       <div class="flex flex-col divide-y divide-border overflow-hidden rounded-card border border-border bg-surface">
-        @for (activity of recentActivity.value(); track activity.id) {
-          <app-activity-entry [activity]="activity" />
-        } @empty {
-          <p class="p-4 text-sm text-muted">Nenhuma atividade recente.</p>
+        @if (recentActivity.value(); as activities) {
+          @for (activity of activities; track activity.id) {
+            <app-activity-entry [activity]="activity" />
+          } @empty {
+            <p class="p-4 text-sm text-muted">Nenhuma atividade recente.</p>
+          }
+        } @else if (recentActivity.hasError()) {
+          <p class="p-4 text-sm text-muted">Não foi possível carregar as atividades.</p>
+        } @else {
+          @for (placeholder of [1, 2, 3]; track placeholder) {
+            <div class="flex items-center gap-4 p-4" aria-hidden="true">
+              <div class="size-8 shrink-0 animate-pulse rounded-full bg-border"></div>
+              <div class="h-4 flex-1 animate-pulse rounded-full bg-border"></div>
+            </div>
+          }
         }
       </div>
     </section>

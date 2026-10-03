@@ -1,8 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
-import { Activity } from '../../core/models/activity.model';
 import { Item } from '../../core/models/item.model';
 import { ActivityService } from '../../core/services/activity.service';
 import { ItemService } from '../../core/services/item.service';
@@ -12,6 +10,8 @@ import { PrimaryNavComponent } from '../../shared/components/primary-nav/primary
 import { ActivityEntryComponent } from './components/activity-entry/activity-entry.component';
 import { AttentionItemComponent } from './components/attention-item/attention-item.component';
 import { StatCardComponent } from './components/stat-card/stat-card.component';
+
+type PurchaseState = 'pending' | 'error';
 
 @Component({
   selector: 'app-home',
@@ -28,17 +28,31 @@ import { StatCardComponent } from './components/stat-card/stat-card.component';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent {
-  private userService = inject(UserService);
   private itemService = inject(ItemService);
-  private activityService = inject(ActivityService);
 
-  session = rxResource({ stream: () => this.userService.getCurrentUser() });
-  stats = rxResource({ stream: () => this.itemService.getStats(), defaultValue: { ok: 0, low: 0, out: 0 } });
-  attentionItems = rxResource({ stream: () => this.itemService.getAttentionItems(3), defaultValue: [] as Item[] });
-  recentActivity = rxResource({ stream: () => this.activityService.getRecentActivity(3), defaultValue: [] as Activity[] });
+  session = inject(UserService).currentSession;
+  stats = this.itemService.stats;
+  attentionItems = this.itemService.attentionPreview;
+  recentActivity = inject(ActivityService).recentActivity;
+
+  purchaseStates = signal<Record<string, PurchaseState>>({});
+
+  constructor() {
+    this.session.load();
+    this.stats.load();
+    this.attentionItems.load();
+    this.recentActivity.load();
+  }
 
   markPurchased(item: Item): void {
-    this.attentionItems.value.update((items) => items.filter((current) => current.id !== item.id));
-    this.itemService.markPurchased(item.id).subscribe();
+    this.setPurchaseState(item.id, 'pending');
+    this.itemService.markPurchased(item.id).subscribe({
+      next: () => this.setPurchaseState(item.id, null),
+      error: () => this.setPurchaseState(item.id, 'error'),
+    });
+  }
+
+  private setPurchaseState(itemId: string, state: PurchaseState | null): void {
+    this.purchaseStates.update(({ [itemId]: _, ...rest }) => (state ? { ...rest, [itemId]: state } : rest));
   }
 }

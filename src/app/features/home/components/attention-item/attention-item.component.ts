@@ -15,6 +15,8 @@ const STATUS_INFO = {
 })
 export class AttentionItemComponent {
   item = input.required<Item>();
+  pending = input(false);
+  failed = input(false);
   purchased = output<void>();
 
   statusInfo = computed(() => STATUS_INFO[itemStatus(this.item()) === 'out' ? 'out' : 'low']);
