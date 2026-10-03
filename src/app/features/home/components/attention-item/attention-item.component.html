@@ -1,0 +1,19 @@
+<div class="flex w-full items-center justify-between rounded-card border border-border bg-surface p-4">
+  <div class="flex items-center gap-4">
+    <span class="flex size-12 items-center justify-center rounded-lg bg-background">
+      <mat-icon>{{ item().icon }}</mat-icon>
+    </span>
+    <div class="flex flex-col items-start gap-1">
+      <p class="text-base font-bold text-ink">{{ item().name }}</p>
+      <span
+        class="rounded-full px-2 py-0.5 text-[10px] font-bold tracking-wide uppercase"
+        [class]="statusInfo().bg + ' ' + statusInfo().text"
+      >
+        {{ statusInfo().label }}
+      </span>
+    </div>
+  </div>
+  <button type="button" class="rounded-full bg-primary px-4 py-2 text-xs font-bold text-white" (click)="purchased.emit()">
+    Comprei
+  </button>
+</div>

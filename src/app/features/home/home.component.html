@@ -1,0 +1,62 @@
+<div class="min-h-screen bg-background md:pl-64">
+  <header class="border-b border-border bg-surface px-6 pt-8 pb-6">
+    <div class="flex items-start justify-between md:mx-auto md:max-w-3xl">
+      <div class="flex flex-col gap-1">
+        <p class="text-sm font-medium tracking-wide text-ink/60 uppercase">Bem-vinda de volta</p>
+        <h1 class="font-display text-3xl font-bold text-ink">
+          @if (session.value(); as data) {
+            Olá, {{ data.user.name }}!
+          } @else {
+            Olá!
+          }
+        </h1>
+        <div class="flex items-center gap-2 pt-1">
+          <mat-icon style="font-size: 1rem; height: 1rem; width: 1rem;">home</mat-icon>
+          <span class="font-display text-lg text-primary">{{ session.value()?.house?.name ?? 'Sua casa' }}</span>
+        </div>
+      </div>
+      <div class="relative shrink-0">
+        <app-avatar [name]="session.value()?.user?.name ?? '?'" size="md" />
+        <span class="absolute right-0 bottom-0 size-3 rounded-full border-2 border-white bg-success"></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex flex-col gap-8 px-6 pt-8 pb-32 md:mx-auto md:max-w-3xl md:pb-12">
+    <section class="flex gap-3">
+      <app-stat-card [value]="stats.value().ok" label="OK" tone="success" />
+      <app-stat-card [value]="stats.value().low" label="Acabando" tone="warning" />
+      <app-stat-card [value]="stats.value().out" label="Esgotado" tone="danger" />
+    </section>
+
+    <section class="flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <h2 class="font-display text-xl font-bold text-ink">Precisa de atenção</h2>
+        <a routerLink="/items" [queryParams]="{ status: 'attention' }" class="text-sm font-semibold text-primary">Ver todos</a>
+      </div>
+      <div class="flex flex-col gap-3">
+        @for (item of attentionItems.value(); track item.id) {
+          <app-attention-item [item]="item" (purchased)="markPurchased(item)" />
+        } @empty {
+          <p class="text-sm text-muted">Nenhum item precisa de atenção agora.</p>
+        }
+      </div>
+    </section>
+
+    <section class="flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <h2 class="font-display text-xl font-bold text-ink">Atividade recente</h2>
+        <a routerLink="/activities" class="text-sm font-semibold text-primary">Ver todos</a>
+      </div>
+      <div class="flex flex-col divide-y divide-border overflow-hidden rounded-card border border-border bg-surface">
+        @for (activity of recentActivity.value(); track activity.id) {
+          <app-activity-entry [activity]="activity" />
+        } @empty {
+          <p class="p-4 text-sm text-muted">Nenhuma atividade recente.</p>
+        }
+      </div>
+    </section>
+  </main>
+</div>
+
+<app-primary-nav />

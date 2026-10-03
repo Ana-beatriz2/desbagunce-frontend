@@ -41,7 +41,13 @@
         }
       </div>
 
-      <button mat-flat-button color="primary" type="submit" class="w-full text-base!">Entrar</button>
+      @if (errorMessage(); as error) {
+        <p class="text-center text-sm text-danger">{{ error }}</p>
+      }
+
+      <button mat-flat-button color="primary" type="submit" class="w-full text-base!" [disabled]="submitting()">
+        {{ submitting() ? 'Entrando...' : 'Entrar' }}
+      </button>
     </form>
 
     <p class="text-center text-sm text-muted">

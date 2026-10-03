@@ -1,0 +1,11 @@
+<div class="flex w-full items-start gap-4 p-4">
+  <app-avatar [name]="activity().userName" [photoUrl]="activity().userAvatarUrl" size="sm" />
+  <div class="flex flex-col gap-1">
+    <p class="text-sm text-ink">
+      <span class="font-bold">{{ activity().userName }}</span>{{ sentence().before
+      }}<span class="font-bold">{{ activity().itemName }}</span
+      >{{ sentence().after }}
+    </p>
+    <p class="text-[11px] text-ink/40">{{ activity().createdAt | relativeTime }}</p>
+  </div>
+</div>
