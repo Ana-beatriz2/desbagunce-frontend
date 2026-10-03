@@ -15,10 +15,7 @@
           <span class="font-display text-lg text-primary">{{ session.value()?.house?.name ?? 'Sua casa' }}</span>
         </div>
       </div>
-      <div class="relative shrink-0">
-        <app-avatar [name]="session.value()?.user?.name ?? '?'" size="md" />
-        <span class="absolute right-0 bottom-0 size-3 rounded-full border-2 border-white bg-success"></span>
-      </div>
+      <app-avatar class="shrink-0" [name]="session.value()?.user?.name ?? '?'" size="md" />
     </div>
   </header>
 
