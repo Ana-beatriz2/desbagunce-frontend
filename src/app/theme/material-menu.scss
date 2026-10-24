@@ -1,0 +1,19 @@
+@use '@angular/material' as mat;
+
+html {
+  @include mat.menu-overrides(
+    (
+      container-color: var(--color-surface),
+      container-shape: var(--radius-field),
+      container-elevation-shadow: 0 4px 16px rgb(0 0 0 / 0.08),
+      item-label-text-color: var(--color-ink),
+      item-label-text-size: 0.875rem,
+      item-label-text-weight: 600,
+      item-icon-color: var(--color-muted),
+      item-icon-size: 1.25rem,
+      item-spacing: 0.5rem,
+      item-with-icon-leading-spacing: 1rem,
+      item-with-icon-trailing-spacing: 1.25rem,
+    )
+  );
+}

@@ -10,7 +10,20 @@
             <span class="font-display text-lg text-primary">{{ data.house.name }}</span>
           </div>
         </div>
-        <app-avatar class="shrink-0" [name]="data.user.name" size="md" />
+        <button
+          type="button"
+          class="shrink-0 rounded-full"
+          aria-label="Abrir menu do perfil"
+          [matMenuTriggerFor]="profileMenu"
+        >
+          <app-avatar [name]="data.user.name" size="md" />
+        </button>
+        <mat-menu #profileMenu="matMenu" xPosition="before">
+          <button mat-menu-item type="button" (click)="logout()">
+            <mat-icon>logout</mat-icon>
+            <span>Sair</span>
+          </button>
+        </mat-menu>
       } @else {
         <div class="flex flex-col gap-3" aria-hidden="true">
           <div class="h-4 w-36 animate-pulse rounded-full bg-border"></div>

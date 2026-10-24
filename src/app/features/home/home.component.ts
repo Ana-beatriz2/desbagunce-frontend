@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { Item } from '../../core/models/item.model';
 import { ActivityService } from '../../core/services/activity.service';
+import { AuthService } from '../../core/services/auth.service';
 import { ItemService } from '../../core/services/item.service';
 import { UserService } from '../../core/services/user.service';
 import { AvatarComponent } from '../../shared/components/avatar/avatar.component';
@@ -18,6 +20,7 @@ type PurchaseState = 'pending' | 'error';
   imports: [
     RouterLink,
     MatIconModule,
+    MatMenuModule,
     AvatarComponent,
     PrimaryNavComponent,
     StatCardComponent,
@@ -29,6 +32,8 @@ type PurchaseState = 'pending' | 'error';
 })
 export class HomeComponent {
   private itemService = inject(ItemService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
   session = inject(UserService).currentSession;
   stats = this.itemService.stats;
@@ -50,6 +55,10 @@ export class HomeComponent {
       next: () => this.setPurchaseState(item.id, null),
       error: () => this.setPurchaseState(item.id, 'error'),
     });
+  }
+
+  logout(): void {
+    this.authService.logout().subscribe(() => this.router.navigateByUrl('/login'));
   }
 
   private setPurchaseState(itemId: string, state: PurchaseState | null): void {
