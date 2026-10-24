@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -9,6 +9,7 @@ import { AuthService } from '../../core/services/auth.service';
 const INVALID_CREDENTIALS_ERROR = 'E-mail ou senha incorretos.';
 const TOO_MANY_REQUESTS_ERROR = 'Muitas tentativas. Tente novamente em alguns minutos.';
 const GENERIC_LOGIN_ERROR = 'Não foi possível entrar. Tente novamente em instantes.';
+const DEFAULT_LANDING_URL = '/home';
 
 @Component({
   selector: 'app-login',
@@ -21,6 +22,8 @@ export class LoginComponent {
   private authService = inject(AuthService);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
+
+  redirectTo = input<string>();
 
   submitting = signal(false);
   errorMessage = signal<string | null>(null);
@@ -46,13 +49,19 @@ export class LoginComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.router.navigateByUrl('/home');
+          this.router.navigateByUrl(this.landingUrl());
         },
         error: (err: FirebaseError) => {
           this.submitting.set(false);
           this.errorMessage.set(this.mapError(err.code));
         },
       });
+  }
+
+  private landingUrl(): string {
+    const target = this.redirectTo();
+    const isInternalPath = !!target && target.startsWith('/') && !target.startsWith('//');
+    return isInternalPath ? target : DEFAULT_LANDING_URL;
   }
 
   private mapError(code: string): string {

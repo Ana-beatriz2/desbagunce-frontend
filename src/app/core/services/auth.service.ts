@@ -19,6 +19,11 @@ export class AuthService {
     });
   }
 
+  async resolveCurrentUser(): Promise<User | null> {
+    await this.auth.authStateReady();
+    return this.auth.currentUser;
+  }
+
   login(email: string, password: string): Observable<User> {
     return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
       map((credential) => credential.user),
