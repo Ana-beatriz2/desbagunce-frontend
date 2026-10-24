@@ -1,0 +1,120 @@
+<div class="min-h-screen bg-background md:pl-64">
+  <header class="border-b border-border bg-surface px-6 pt-8 pb-6">
+    <div class="flex flex-col gap-5 md:mx-auto md:max-w-3xl">
+      <div class="flex items-center justify-between gap-4">
+        <h1 class="font-display text-3xl font-bold text-ink">Seus Itens</h1>
+        <a
+          routerLink="/items/new"
+          class="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary text-white"
+          aria-label="Adicionar item"
+        >
+          <mat-icon>add</mat-icon>
+        </a>
+      </div>
+
+      <div class="relative">
+        <mat-icon
+          class="pointer-events-none absolute top-1/2 left-4 -translate-y-1/2 text-muted"
+          style="font-size: 1.25rem; height: 1.25rem; width: 1.25rem"
+        >
+          search
+        </mat-icon>
+        <input
+          type="search"
+          [formControl]="searchControl"
+          placeholder="Buscar no estoque..."
+          aria-label="Buscar no estoque"
+          class="w-full rounded-field border border-border bg-background/50 py-3 pr-4 pl-12 text-base text-ink placeholder:text-ink/40 focus:border-primary focus:ring-2 focus:ring-primary/30 focus:outline-none"
+        />
+      </div>
+
+      <div class="scrollbar-none -mx-6 flex gap-2 overflow-x-auto px-6">
+        @if (attentionOnly()) {
+          <button
+            type="button"
+            class="shrink-0 rounded-full border px-4 py-2 text-sm font-semibold whitespace-nowrap"
+            [class]="chipClass(true)"
+            (click)="showAll()"
+          >
+            Precisa de atenção
+          </button>
+        }
+        <button
+          type="button"
+          class="shrink-0 rounded-full border px-4 py-2 text-sm font-semibold whitespace-nowrap"
+          [class]="chipClass(showingAll())"
+          (click)="showAll()"
+        >
+          Todos
+        </button>
+        @for (tag of tags.value() ?? []; track tag.id) {
+          <button
+            type="button"
+            class="shrink-0 rounded-full border px-4 py-2 text-sm font-semibold whitespace-nowrap"
+            [class]="chipClass(selectedTagId() === tag.id)"
+            (click)="selectTag(tag.id)"
+          >
+            {{ tag.name }}
+          </button>
+        }
+      </div>
+    </div>
+  </header>
+
+  <main class="flex flex-col gap-6 px-6 pt-6 pb-32 md:mx-auto md:max-w-3xl md:pb-12">
+    @if (items.value(); as result) {
+      @if (result.data.length) {
+        <div class="grid gap-3 md:grid-cols-2">
+          @for (item of result.data; track item.id) {
+            <app-item-card
+              [item]="item"
+              [pending]="purchaseStates()[item.id] === 'pending'"
+              [failed]="purchaseStates()[item.id] === 'error'"
+              (purchased)="markPurchased(item)"
+            />
+          }
+        </div>
+
+        <div class="flex items-center justify-between gap-4">
+          <button
+            type="button"
+            class="flex size-10 shrink-0 items-center justify-center rounded-full"
+            [class]="pagerClass(page() > 1)"
+            [disabled]="page() <= 1"
+            aria-label="Página anterior"
+            (click)="goToPage(page() - 1)"
+          >
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+
+          <p class="text-sm font-semibold text-muted">Página {{ page() }} de {{ totalPages() }}</p>
+
+          <button
+            type="button"
+            class="flex size-10 shrink-0 items-center justify-center rounded-full"
+            [class]="pagerClass(page() < totalPages())"
+            [disabled]="page() >= totalPages()"
+            aria-label="Próxima página"
+            (click)="goToPage(page() + 1)"
+          >
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+        </div>
+      } @else {
+        <p class="py-12 text-center text-sm text-muted">
+          Nenhum item encontrado com esses filtros.
+        </p>
+      }
+    } @else if (items.error()) {
+      <p class="py-12 text-center text-sm text-muted">Não foi possível carregar os itens.</p>
+    } @else {
+      <div class="grid gap-3 md:grid-cols-2">
+        @for (placeholder of [1, 2, 3, 4]; track placeholder) {
+          <div class="h-36 animate-pulse rounded-card bg-border" aria-hidden="true"></div>
+        }
+      </div>
+    }
+  </main>
+</div>
+
+<app-primary-nav />

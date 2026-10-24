@@ -1,0 +1,70 @@
+<div class="flex h-full flex-col gap-3 rounded-card border border-border bg-surface p-4">
+  <div class="flex items-start gap-3">
+    @if (item().imageUrl; as imageUrl) {
+      <img [src]="imageUrl" alt="" class="size-14 shrink-0 rounded-lg object-cover" />
+    } @else {
+      <span class="flex size-14 shrink-0 items-center justify-center rounded-lg bg-background">
+        <mat-icon>{{ item().icon }}</mat-icon>
+      </span>
+    }
+
+    <div class="flex min-w-0 flex-1 flex-col gap-1">
+      <p class="text-base font-bold text-ink">{{ item().name }}</p>
+      @if (tagLabel()) {
+        <p class="truncate text-xs text-muted">{{ tagLabel() }}</p>
+      }
+      <p class="text-xs text-muted">Qtd: {{ quantityLabel() }}</p>
+    </div>
+
+    <div class="flex shrink-0 flex-col items-end gap-2">
+      <span
+        class="rounded-full px-2 py-0.5 text-[10px] font-bold tracking-wide uppercase"
+        [class]="statusInfo().bg + ' ' + statusInfo().text"
+      >
+        {{ statusInfo().label }}
+      </span>
+      <button
+        type="button"
+        class="flex size-8 items-center justify-center rounded-full text-muted"
+        aria-label="Mais ações do item"
+        [matMenuTriggerFor]="itemMenu"
+      >
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #itemMenu="matMenu" xPosition="before">
+        <button mat-menu-item type="button" disabled>
+          <mat-icon>edit</mat-icon>
+          <span>Editar</span>
+        </button>
+        <button mat-menu-item type="button" disabled>
+          <mat-icon>delete</mat-icon>
+          <span>Excluir</span>
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+
+  <button
+    type="button"
+    class="relative mt-auto w-full rounded-field py-3 text-sm font-bold disabled:opacity-70"
+    [class]="purchaseClass()"
+    [disabled]="pending()"
+    [attr.aria-busy]="pending()"
+    (click)="purchased.emit()"
+  >
+    <span [class.invisible]="pending()">Comprei</span>
+    @if (pending()) {
+      <span class="absolute inset-0 flex items-center justify-center" aria-hidden="true">
+        <span
+          class="size-4 animate-spin rounded-full border-2 border-transparent border-t-current"
+        ></span>
+      </span>
+    }
+  </button>
+
+  @if (failed()) {
+    <p class="text-xs text-danger" role="alert">
+      Não foi possível registrar a compra. Tente novamente.
+    </p>
+  }
+</div>
