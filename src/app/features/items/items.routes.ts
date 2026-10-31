@@ -7,7 +7,6 @@ export const ITEMS_ROUTES: Routes = [
   },
   {
     path: 'new',
-    loadComponent: () => import('../../shared/components/coming-soon/coming-soon.component').then((m) => m.ComingSoonComponent),
-    data: { title: 'Novo item' },
+    loadComponent: () => import('./new-item/new-item.component').then((m) => m.NewItemComponent),
   },
 ];

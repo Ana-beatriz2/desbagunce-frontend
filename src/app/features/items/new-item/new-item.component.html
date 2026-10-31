@@ -1,0 +1,148 @@
+<div class="min-h-screen bg-background md:pl-64">
+  <header class="border-b border-border bg-surface px-6 pt-8 pb-6">
+    <div class="flex items-center gap-3 md:mx-auto md:max-w-xl">
+      <a
+        routerLink="/items"
+        class="flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-surface text-ink"
+        aria-label="Voltar para a lista de itens"
+      >
+        <mat-icon>arrow_back</mat-icon>
+      </a>
+      <h1 class="font-display text-3xl font-bold text-ink">Novo item</h1>
+    </div>
+  </header>
+
+  <main class="px-6 pt-6 pb-32 md:mx-auto md:max-w-xl md:pb-12">
+    <form class="flex flex-col gap-6" [formGroup]="form" (ngSubmit)="onSubmit()">
+      <div class="flex flex-col gap-1.5">
+        <label for="name" class="text-sm font-medium text-ink">Nome do item</label>
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          placeholder="Ex.: Detergente Ypê"
+          class="w-full rounded-field border border-border bg-background/50 px-4 py-4 text-base text-ink placeholder:text-ink/40 focus:border-primary focus:ring-2 focus:ring-primary/30 focus:outline-none"
+          [class.border-danger]="form.controls.name.invalid && form.controls.name.touched"
+        />
+        @if (form.controls.name.invalid && form.controls.name.touched) {
+          <p class="text-xs text-danger">Informe o nome do item.</p>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <span class="text-sm font-medium text-ink">Como você conta esse item</span>
+        <div class="flex gap-2" role="group" aria-label="Unidade de medida">
+          @for (option of unitOptions; track option.value) {
+            <button
+              type="button"
+              class="flex-1 rounded-field border px-4 py-3 text-sm font-semibold"
+              [class]="chipClass(form.controls.unit.value === option.value)"
+              [attr.aria-pressed]="form.controls.unit.value === option.value"
+              (click)="selectUnit(option.value)"
+            >
+              {{ option.label }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label for="currentQuantity" class="text-sm font-medium text-ink">Quantidade atual</label>
+        <div class="relative">
+          <input
+            id="currentQuantity"
+            type="number"
+            inputmode="decimal"
+            formControlName="currentQuantity"
+            min="0"
+            [step]="quantityStep()"
+            placeholder="0"
+            class="w-full rounded-field border border-border bg-background/50 py-4 pr-14 pl-4 text-base text-ink placeholder:text-ink/40 focus:border-primary focus:ring-2 focus:ring-primary/30 focus:outline-none"
+            [class.border-danger]="form.controls.currentQuantity.invalid && form.controls.currentQuantity.touched"
+          />
+          <span class="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-sm font-semibold text-muted">
+            {{ quantitySuffix() }}
+          </span>
+        </div>
+        @if (form.controls.currentQuantity.touched && form.controls.currentQuantity.errors; as errors) {
+          <p class="text-xs text-danger">
+            @if (errors['required']) {
+              Informe a quantidade que você tem agora.
+            } @else if (errors['wholeNumber']) {
+              Itens contados por unidade precisam de um número inteiro.
+            } @else if (errors['maxDecimals']) {
+              Use no máximo três casas decimais.
+            } @else if (errors['min']) {
+              A quantidade não pode ser negativa.
+            } @else {
+              Essa quantidade é alta demais.
+            }
+          </p>
+        }
+        <p class="text-xs text-muted">Pode ser 0 se o item já acabou — ele entra como esgotado.</p>
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label for="estimatedDurationDays" class="text-sm font-medium text-ink">Duração estimada</label>
+        <div class="relative">
+          <input
+            id="estimatedDurationDays"
+            type="number"
+            inputmode="numeric"
+            formControlName="estimatedDurationDays"
+            min="1"
+            [max]="maxDurationDays"
+            step="1"
+            placeholder="30"
+            class="w-full rounded-field border border-border bg-background/50 py-4 pr-16 pl-4 text-base text-ink placeholder:text-ink/40 focus:border-primary focus:ring-2 focus:ring-primary/30 focus:outline-none"
+            [class.border-danger]="
+              form.controls.estimatedDurationDays.invalid && form.controls.estimatedDurationDays.touched
+            "
+          />
+          <span class="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2 text-sm font-semibold text-muted">
+            dias
+          </span>
+        </div>
+        @if (form.controls.estimatedDurationDays.touched && form.controls.estimatedDurationDays.errors; as errors) {
+          <p class="text-xs text-danger">
+            @if (errors['required']) {
+              Informe por quantos dias essa quantidade costuma durar.
+            } @else if (errors['integer']) {
+              Use um número inteiro de dias.
+            } @else if (errors['min']) {
+              Informe pelo menos um dia.
+            } @else {
+              O máximo são {{ maxDurationDays }} dias.
+            }
+          </p>
+        }
+        <p class="text-xs text-muted">
+          Quanto tempo essa quantidade costuma durar na sua casa. É com isso que estimamos quando o item vai acabar.
+        </p>
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label for="notes" class="text-sm font-medium text-ink">
+          Observações <span class="font-normal text-muted">(opcional)</span>
+        </label>
+        <textarea
+          id="notes"
+          formControlName="notes"
+          rows="3"
+          placeholder="Ex.: a marca que todo mundo prefere"
+          class="w-full resize-y rounded-field border border-border bg-background/50 px-4 py-4 text-base text-ink placeholder:text-ink/40 focus:border-primary focus:ring-2 focus:ring-primary/30 focus:outline-none"
+        ></textarea>
+      </div>
+
+      @if (errorMessage(); as error) {
+        <p class="text-center text-sm text-danger" role="alert">{{ error }}</p>
+      }
+
+      <button mat-flat-button color="primary" type="submit" class="w-full text-base!" [disabled]="submitting()">
+        {{ submitting() ? 'Salvando...' : 'Salvar item' }}
+      </button>
+    </form>
+  </main>
+</div>
+
+<app-primary-nav />

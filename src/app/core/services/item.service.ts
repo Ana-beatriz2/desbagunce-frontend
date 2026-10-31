@@ -1,6 +1,15 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, delay, of, tap } from 'rxjs';
-import { Item, ItemQuery, ItemStats, itemStatus } from '../models/item.model';
+import { environment } from '../../../environments/environment';
+import {
+  CreateItemRequest,
+  Item,
+  ItemQuery,
+  ItemResponse,
+  ItemStats,
+  itemStatus,
+} from '../models/item.model';
 import { Page } from '../models/pagination.model';
 import { Tag } from '../models/tag.model';
 import { CachedResource } from '../utils/cached-resource';
@@ -254,6 +263,7 @@ function matchesQuery(item: Item, query: ItemQuery): boolean {
 
 @Injectable({ providedIn: 'root' })
 export class ItemService {
+  private http = inject(HttpClient);
   private activityService = inject(ActivityService);
 
   readonly stats = new CachedResource(() => this.getStats());
@@ -278,6 +288,18 @@ export class ItemService {
       page: query.page,
       pageSize: query.pageSize,
     }).pipe(delay(300));
+  }
+
+  createItem(houseId: string, payload: CreateItemRequest): Observable<ItemResponse> {
+    return this.http
+      .post<ItemResponse>(`${environment.apiUrl}/houses/${houseId}/items`, payload)
+      .pipe(
+        tap(() => {
+          this.stats.refresh();
+          this.attentionPreview.refresh();
+          this.activityService.recentActivity.refresh();
+        }),
+      );
   }
 
   markPurchased(itemId: string): Observable<void> {
