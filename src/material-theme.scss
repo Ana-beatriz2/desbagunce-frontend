@@ -7,6 +7,7 @@
 @use './theme-colors' as theme;
 @use './app/theme/material-button';
 @use './app/theme/material-menu';
+@use './app/theme/material-snack-bar';
 
 // Palette generated from the Figma primary color (#b5592f) via:
 // ng generate @angular/material:theme-color --primary-color="#b5592f"

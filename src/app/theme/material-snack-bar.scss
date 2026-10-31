@@ -1,0 +1,24 @@
+@use '@angular/material' as mat;
+
+html {
+  @include mat.snack-bar-overrides(
+    (
+      container-color: transparent,
+      container-shape: var(--radius-card),
+    )
+  );
+}
+
+// The toast draws its own card (shared/components/toast), so the Material container
+// around it must contribute nothing: no dark surface, no elevation, no padding.
+.app-toast-panel {
+  .mdc-snackbar__surface {
+    box-shadow: none;
+    padding: 0;
+    min-width: auto;
+  }
+
+  .mat-mdc-snack-bar-label {
+    padding: 0;
+  }
+}

@@ -7,6 +7,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { Item } from '../../core/models/item.model';
 import { pageCount } from '../../core/models/pagination.model';
 import { ItemService } from '../../core/services/item.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { TagService } from '../../core/services/tag.service';
 import { PrimaryNavComponent } from '../../shared/components/primary-nav/primary-nav.component';
 import { ItemCardComponent } from './components/item-card/item-card.component';
@@ -28,6 +29,7 @@ type PurchaseState = 'pending' | 'error';
 })
 export class ItemsComponent {
   private itemService = inject(ItemService);
+  private notifications = inject(NotificationService);
   private router = inject(Router);
 
   status = input<string>();
@@ -88,6 +90,7 @@ export class ItemsComponent {
     this.itemService.markPurchased(item.id).subscribe({
       next: () => {
         this.setPurchaseState(item.id, null);
+        this.notifications.success(`Compra de ${item.name} registrada.`);
         this.items.reload();
       },
       error: () => this.setPurchaseState(item.id, 'error'),

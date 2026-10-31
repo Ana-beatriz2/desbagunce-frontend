@@ -6,6 +6,7 @@ import { Item } from '../../core/models/item.model';
 import { ActivityService } from '../../core/services/activity.service';
 import { AuthService } from '../../core/services/auth.service';
 import { ItemService } from '../../core/services/item.service';
+import { NotificationService } from '../../core/services/notification.service';
 import { UserService } from '../../core/services/user.service';
 import { AvatarComponent } from '../../shared/components/avatar/avatar.component';
 import { PrimaryNavComponent } from '../../shared/components/primary-nav/primary-nav.component';
@@ -33,6 +34,7 @@ type PurchaseState = 'pending' | 'error';
 export class HomeComponent {
   private itemService = inject(ItemService);
   private authService = inject(AuthService);
+  private notifications = inject(NotificationService);
   private router = inject(Router);
 
   session = inject(UserService).currentSession;
@@ -52,7 +54,10 @@ export class HomeComponent {
   markPurchased(item: Item): void {
     this.setPurchaseState(item.id, 'pending');
     this.itemService.markPurchased(item.id).subscribe({
-      next: () => this.setPurchaseState(item.id, null),
+      next: () => {
+        this.setPurchaseState(item.id, null);
+        this.notifications.success(`Compra de ${item.name} registrada.`);
+      },
       error: () => this.setPurchaseState(item.id, 'error'),
     });
   }

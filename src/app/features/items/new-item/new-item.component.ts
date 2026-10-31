@@ -14,6 +14,7 @@ import {
   unitLabel,
 } from '../../../core/models/item.model';
 import { ItemService } from '../../../core/services/item.service';
+import { NotificationService } from '../../../core/services/notification.service';
 import { UserService } from '../../../core/services/user.service';
 import { PrimaryNavComponent } from '../../../shared/components/primary-nav/primary-nav.component';
 
@@ -58,6 +59,7 @@ function maxDecimals(max: number): ValidatorFn {
 export class NewItemComponent {
   private fb = inject(FormBuilder);
   private itemService = inject(ItemService);
+  private notifications = inject(NotificationService);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
 
@@ -121,7 +123,10 @@ export class NewItemComponent {
       .createItem(houseId, this.buildPayload())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: () => this.router.navigate(['/items']),
+        next: (item) => {
+          this.notifications.success(`${item.name} foi adicionado ao estoque.`);
+          this.router.navigate(['/items']);
+        },
         error: (err: HttpErrorResponse) => {
           this.submitting.set(false);
           this.errorMessage.set(this.mapError(err.status));
