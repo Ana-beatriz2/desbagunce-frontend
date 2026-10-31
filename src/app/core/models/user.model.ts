@@ -22,3 +22,8 @@ export interface CreateAdminUserResponse {
   user: User;
   house: House;
 }
+
+export interface CurrentUserResponse {
+  user: User;
+  house: House;
+}

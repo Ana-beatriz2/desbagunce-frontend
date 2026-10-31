@@ -24,6 +24,11 @@
             <span>Sair</span>
           </button>
         </mat-menu>
+      } @else if (session.hasError()) {
+        <div class="flex flex-col gap-1">
+          <h1 class="font-display text-3xl font-bold text-ink">Olá!</h1>
+          <p class="text-sm text-muted">Não foi possível carregar os seus dados.</p>
+        </div>
       } @else {
         <div class="flex flex-col gap-3" aria-hidden="true">
           <div class="h-4 w-36 animate-pulse rounded-full bg-border"></div>
