@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+  untracked,
+} from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -44,11 +52,30 @@ export class HomeComponent {
 
   purchaseStates = signal<Record<string, PurchaseState>>({});
 
+  // The three cards the design shows, from the four statuses the backend reports:
+  // "probably out" is an item we believe ran out, so it belongs with the empty ones.
+  statCounts = computed(() => {
+    const data = this.stats.value();
+    if (!data) return null;
+    return {
+      ok: data.inStock,
+      low: data.runningLow,
+      out: data.outOfStock + data.probablyOut,
+    };
+  });
+
   constructor() {
     this.session.load();
-    this.stats.load();
-    this.attentionItems.load();
     this.recentActivity.load();
+
+    effect(() => {
+      if (this.session.value()) {
+        untracked(() => {
+          this.stats.load();
+          this.attentionItems.load();
+        });
+      }
+    });
   }
 
   markPurchased(item: Item): void {

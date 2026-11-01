@@ -51,8 +51,9 @@
           <button
             type="button"
             class="shrink-0 rounded-full border px-4 py-2 text-sm font-semibold whitespace-nowrap"
-            [class]="chipClass(selectedTagId() === tag.id)"
-            (click)="selectTag(tag.id)"
+            [class]="chipClass(isTagSelected(tag.id))"
+            [attr.aria-pressed]="isTagSelected(tag.id)"
+            (click)="toggleTag(tag.id)"
           >
             {{ tag.name }}
           </button>
@@ -62,9 +63,13 @@
   </header>
 
   <main class="flex flex-col gap-6 px-6 pt-6 pb-32 md:mx-auto md:max-w-3xl md:pb-12">
-    @if (items.value(); as result) {
+    @if (displayedPage(); as result) {
       @if (result.data.length) {
-        <div class="grid gap-3 md:grid-cols-2">
+        <div
+          class="grid gap-3 transition-opacity md:grid-cols-2"
+          [class.opacity-50]="items.isLoading()"
+          [attr.aria-busy]="items.isLoading()"
+        >
           @for (item of result.data; track item.id) {
             <app-item-card
               [item]="item"

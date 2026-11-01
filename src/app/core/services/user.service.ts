@@ -18,4 +18,8 @@ export class UserService {
   getCurrentUser(): Observable<CurrentUserResponse> {
     return this.http.get<CurrentUserResponse>(`${environment.apiUrl}/users/me`);
   }
+
+  houseId(): string | null {
+    return this.currentSession.value()?.user.houseId ?? null;
+  }
 }

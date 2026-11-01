@@ -1,10 +1,10 @@
 <div class="flex h-full flex-col gap-3 rounded-card border border-border bg-surface p-4">
   <div class="flex items-start gap-3">
-    @if (item().imageUrl; as imageUrl) {
-      <img [src]="imageUrl" alt="" class="size-14 shrink-0 rounded-lg object-cover" />
+    @if (item().photoPath; as photoPath) {
+      <img [src]="photoPath" alt="" class="size-14 shrink-0 rounded-lg object-cover" />
     } @else {
       <span class="flex size-14 shrink-0 items-center justify-center rounded-lg bg-background">
-        <mat-icon>{{ item().icon }}</mat-icon>
+        <mat-icon>{{ icon() }}</mat-icon>
       </span>
     }
 

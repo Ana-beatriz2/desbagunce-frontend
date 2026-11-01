@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { Item, itemStatus } from '../../../../core/models/item.model';
+import { Item, ItemStatus, itemIcon } from '../../../../core/models/item.model';
 
-const STATUS_INFO = {
-  low: { label: 'Acabando', bg: 'bg-warning/10', text: 'text-warning' },
-  out: { label: 'Esgotado', bg: 'bg-danger/10', text: 'text-danger' },
+const STATUS_INFO: Record<ItemStatus, { label: string; bg: string; text: string }> = {
+  in_stock: { label: 'OK', bg: 'bg-success/10', text: 'text-success' },
+  running_low: { label: 'Acabando', bg: 'bg-warning/10', text: 'text-warning' },
+  probably_out: { label: 'Provavelmente acabou', bg: 'bg-warning/10', text: 'text-warning' },
+  out_of_stock: { label: 'Esgotado', bg: 'bg-danger/10', text: 'text-danger' },
 };
 
 @Component({
@@ -19,5 +21,6 @@ export class AttentionItemComponent {
   failed = input(false);
   purchased = output<void>();
 
-  statusInfo = computed(() => STATUS_INFO[itemStatus(this.item()) === 'out' ? 'out' : 'low']);
+  statusInfo = computed(() => STATUS_INFO[this.item().status]);
+  icon = computed(() => itemIcon(this.item()));
 }

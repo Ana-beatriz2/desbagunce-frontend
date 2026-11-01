@@ -42,7 +42,7 @@
 
   <main class="flex flex-col gap-8 px-6 pt-8 pb-32 md:mx-auto md:max-w-3xl md:pb-12">
     <section class="flex gap-3">
-      @if (stats.value(); as data) {
+      @if (statCounts(); as data) {
         <app-stat-card [value]="data.ok" label="OK" tone="success" />
         <app-stat-card [value]="data.low" label="Acabando" tone="warning" />
         <app-stat-card [value]="data.out" label="Esgotado" tone="danger" />
